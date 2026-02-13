@@ -22,8 +22,14 @@ interface BarChartEChartsProps {
 }
 
 export function BarChartECharts({ dataset }: BarChartEChartsProps) {
+  const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
+
   const option: EChartsOption = {
-    animation: false,
+    animation: true,
+    animationDuration,
+    animationDurationUpdate: Math.max(250, Math.floor(animationDuration * 0.7)),
+    animationEasing: "cubicOut",
+    animationEasingUpdate: "cubicInOut",
     tooltip: {
       trigger: "axis",
       axisPointer: { type: "shadow" },
@@ -72,6 +78,7 @@ export function BarChartECharts({ dataset }: BarChartEChartsProps) {
         itemStyle: {
           color: "#0f766e",
         },
+        animationDelay: 0,
         large: true,
         largeThreshold: 400,
         progressive: 4000,

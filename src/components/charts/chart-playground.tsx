@@ -1,15 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { buildHistogramDataset } from "@/features/data-generator/build-histogram-dataset";
+import { buildHistogramDataset } from "@/core/data-generator/build-histogram-dataset";
 import type { ChartLibrary, DataScale } from "@/types/chart-data";
 
 import { BarChartChartJs } from "./bar-chart-chart-js";
 import { BarChartECharts } from "./bar-chart-echarts";
 
-const SCALE_OPTIONS: DataScale[] = [10000, 100000, 1000000];
+const SCALE_OPTIONS: DataScale[] = [
+  10000,
+  100000,
+  1000000,
+  10000000,
+  100000000,
+  1000000000,
+];
 const BUCKET_OPTIONS = [40, 80, 120, 160];
+const TAB_SWITCH_DELAY_MS = 260;
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("ko-KR").format(value);
@@ -21,9 +29,42 @@ function formatMs(value: number) {
 
 export function ChartPlayground() {
   const [activeLibrary, setActiveLibrary] = useState<ChartLibrary>("echarts");
+  const [pendingLibrary, setPendingLibrary] = useState<ChartLibrary | null>(null);
+  const [isSwitchingLibrary, setIsSwitchingLibrary] = useState<boolean>(false);
   const [scale, setScale] = useState<DataScale>(10000);
   const [bucketCount, setBucketCount] = useState<number>(80);
   const [seed, setSeed] = useState<number>(20260212);
+  const switchTimeoutRef = useRef<number | null>(null);
+  const selectedLibrary = pendingLibrary ?? activeLibrary;
+
+  useEffect(
+    () => () => {
+      if (switchTimeoutRef.current !== null) {
+        window.clearTimeout(switchTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  function handleLibraryTabClick(nextLibrary: ChartLibrary) {
+    if (nextLibrary === selectedLibrary) {
+      return;
+    }
+
+    if (switchTimeoutRef.current !== null) {
+      window.clearTimeout(switchTimeoutRef.current);
+    }
+
+    setPendingLibrary(nextLibrary);
+    setIsSwitchingLibrary(true);
+
+    switchTimeoutRef.current = window.setTimeout(() => {
+      setActiveLibrary(nextLibrary);
+      setPendingLibrary(null);
+      setIsSwitchingLibrary(false);
+      switchTimeoutRef.current = null;
+    }, TAB_SWITCH_DELAY_MS);
+  }
 
   const dataset = useMemo(
     () => buildHistogramDataset({ scale, bucketCount, seed }),
@@ -49,9 +90,9 @@ export function ChartPlayground() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => setActiveLibrary("echarts")}
+            onClick={() => handleLibraryTabClick("echarts")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              activeLibrary === "echarts"
+              selectedLibrary === "echarts"
                 ? "bg-teal-700 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
@@ -60,9 +101,9 @@ export function ChartPlayground() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveLibrary("chartjs")}
+            onClick={() => handleLibraryTabClick("chartjs")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              activeLibrary === "chartjs"
+              selectedLibrary === "chartjs"
                 ? "bg-blue-700 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
@@ -157,12 +198,25 @@ export function ChartPlayground() {
             seed: {dataset.seed} / generated: {dataset.generatedAt}
           </p>
         </div>
+        {dataset.isApproximate ? (
+          <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            샘플 기반 추정: {formatNumber(dataset.sampleSize)}건 샘플을
+            {` ${formatNumber(dataset.scale)}건`}으로 비율 확장했습니다.
+          </p>
+        ) : null}
 
-        {activeLibrary === "echarts" ? (
-          <BarChartECharts dataset={dataset} />
-        ) : (
-          <BarChartChartJs dataset={dataset} />
-        )}
+        <div className="relative min-h-[460px]">
+          {isSwitchingLibrary ? (
+            <div className="flex h-[460px] w-full flex-col items-center justify-center gap-3 rounded-lg border border-slate-200 bg-slate-50">
+              <span className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-700" />
+              <p className="text-sm font-medium text-slate-600">차트 전환 중...</p>
+            </div>
+          ) : activeLibrary === "echarts" ? (
+            <BarChartECharts dataset={dataset} />
+          ) : (
+            <BarChartChartJs dataset={dataset} />
+          )}
+        </div>
       </section>
     </div>
   );

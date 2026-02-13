@@ -21,6 +21,8 @@ interface BarChartChartJsProps {
 }
 
 export function BarChartChartJs({ dataset }: BarChartChartJsProps) {
+  const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
+
   const data: ChartData<"bar", number[], string> = {
     labels: dataset.labels,
     datasets: [
@@ -36,7 +38,15 @@ export function BarChartChartJs({ dataset }: BarChartChartJsProps) {
   const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: false,
+    animation: {
+      duration: animationDuration,
+      easing: "easeOutCubic",
+    },
+    animations: {
+      y: {
+        from: 0,
+      },
+    },
     normalized: true,
     scales: {
       x: {
