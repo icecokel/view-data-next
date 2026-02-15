@@ -22,3 +22,4 @@ export interface HistogramDataset {
 }
 
 export type ChartLibrary = "echarts" | "chartjs";
+export type ChartKind = "bar" | "line";

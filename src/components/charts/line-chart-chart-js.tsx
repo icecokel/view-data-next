@@ -1,45 +1,60 @@
 "use client";
 
 import {
-  BarElement,
   CategoryScale,
   Chart as ChartJS,
+  Filler,
   Legend,
+  LineElement,
   LinearScale,
+  PointElement,
   Tooltip,
   type ChartData,
   type ChartOptions,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 
 import type { HistogramDataset } from "@/types/chart-data";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  Filler,
+);
 
-interface BarChartChartJsProps {
+interface LineChartChartJsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
 }
 
-export function BarChartChartJs({ dataset, labels, counts }: BarChartChartJsProps) {
+export function LineChartChartJs({ dataset, labels, counts }: LineChartChartJsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
 
-  const data: ChartData<"bar", number[], string> = {
+  const data: ChartData<"line", number[], string> = {
     labels: chartLabels,
     datasets: [
       {
         label: "Records",
         data: chartCounts,
-        backgroundColor: "#2563eb",
-        borderRadius: 2,
+        borderColor: "#1d4ed8",
+        backgroundColor: "rgba(37, 99, 235, 0.14)",
+        fill: true,
+        tension: 0.25,
+        pointRadius: 0,
+        pointHoverRadius: 3,
+        borderWidth: 2,
       },
     ],
   };
 
-  const options: ChartOptions<"bar"> = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     animation: {
@@ -84,7 +99,7 @@ export function BarChartChartJs({ dataset, labels, counts }: BarChartChartJsProp
 
   return (
     <div className="h-[460px] w-full">
-      <Bar data={data} options={options} />
+      <Line data={data} options={options} />
     </div>
   );
 }

@@ -17,13 +17,13 @@ const ReactECharts = dynamic(
   },
 );
 
-interface BarChartEChartsProps {
+interface LineChartEChartsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
 }
 
-export function BarChartECharts({ dataset, labels, counts }: BarChartEChartsProps) {
+export function LineChartECharts({ dataset, labels, counts }: LineChartEChartsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
@@ -36,7 +36,6 @@ export function BarChartECharts({ dataset, labels, counts }: BarChartEChartsProp
     animationEasingUpdate: "cubicInOut",
     tooltip: {
       trigger: "axis",
-      axisPointer: { type: "shadow" },
     },
     grid: {
       left: 44,
@@ -76,15 +75,18 @@ export function BarChartECharts({ dataset, labels, counts }: BarChartEChartsProp
     series: [
       {
         name: "Records",
-        type: "bar",
+        type: "line",
         data: chartCounts,
-        barMaxWidth: 24,
-        itemStyle: {
-          color: "#0f766e",
+        showSymbol: false,
+        smooth: 0.2,
+        lineStyle: {
+          width: 2,
+          color: "#0d9488",
         },
-        animationDelay: 0,
-        large: true,
-        largeThreshold: 400,
+        areaStyle: {
+          color: "rgba(13, 148, 136, 0.12)",
+        },
+        sampling: "lttb",
         progressive: 4000,
         progressiveThreshold: 8000,
       },
