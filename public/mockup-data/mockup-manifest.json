@@ -1,0 +1,382 @@
+{
+  "generatedAt": "2026-02-19T08:45:15.226Z",
+  "outputDir": "/Users/smlee/view-data-next/public/mockup-data",
+  "options": {
+    "seed": 20260212,
+    "scales": [
+      10000,
+      50000,
+      100000,
+      500000,
+      1000000,
+      2000000,
+      5000000,
+      10000000
+    ],
+    "bucketCounts": [
+      40,
+      80,
+      120,
+      160
+    ],
+    "keepRecords": 1,
+    "outputDir": "/Users/smlee/view-data-next/public/mockup-data"
+  },
+  "totalFiles": 32,
+  "totalSizeBytes": 151702,
+  "elapsedMs": 300194.27,
+  "manifest": [
+    {
+      "scale": 10000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3768,
+      "sampleSize": 10000,
+      "storedRecordCount": 1,
+      "generationMs": 321.44
+    },
+    {
+      "scale": 50000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-50000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-50000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3794,
+      "sampleSize": 50000,
+      "storedRecordCount": 1,
+      "generationMs": 686.79
+    },
+    {
+      "scale": 100000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-100000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-100000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3817,
+      "sampleSize": 100000,
+      "storedRecordCount": 1,
+      "generationMs": 1402.53
+    },
+    {
+      "scale": 500000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-500000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-500000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3861,
+      "sampleSize": 500000,
+      "storedRecordCount": 1,
+      "generationMs": 8580.21
+    },
+    {
+      "scale": 1000000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-1000000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-1000000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3884,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 17914.24
+    },
+    {
+      "scale": 2000000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-2000000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-2000000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3915,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 25987.19
+    },
+    {
+      "scale": 5000000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-5000000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-5000000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3889,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 17557.36
+    },
+    {
+      "scale": 10000000,
+      "bucketCount": 40,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000000-bucket-40-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000000-bucket-40-seed-20260212.json",
+      "fileSizeBytes": 3913,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 23810.39
+    },
+    {
+      "scale": 10000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4312,
+      "sampleSize": 10000,
+      "storedRecordCount": 1,
+      "generationMs": 247.93
+    },
+    {
+      "scale": 50000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-50000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-50000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4373,
+      "sampleSize": 50000,
+      "storedRecordCount": 1,
+      "generationMs": 839.98
+    },
+    {
+      "scale": 100000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-100000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-100000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4415,
+      "sampleSize": 100000,
+      "storedRecordCount": 1,
+      "generationMs": 2334.23
+    },
+    {
+      "scale": 500000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-500000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-500000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4478,
+      "sampleSize": 500000,
+      "storedRecordCount": 1,
+      "generationMs": 10194.1
+    },
+    {
+      "scale": 1000000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-1000000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-1000000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4497,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 14316.39
+    },
+    {
+      "scale": 2000000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-2000000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-2000000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4504,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 16007.45
+    },
+    {
+      "scale": 5000000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-5000000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-5000000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4539,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 13887.87
+    },
+    {
+      "scale": 10000000,
+      "bucketCount": 80,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000000-bucket-80-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000000-bucket-80-seed-20260212.json",
+      "fileSizeBytes": 4580,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 19934.56
+    },
+    {
+      "scale": 10000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 4825,
+      "sampleSize": 10000,
+      "storedRecordCount": 1,
+      "generationMs": 137.19
+    },
+    {
+      "scale": 50000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-50000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-50000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 4912,
+      "sampleSize": 50000,
+      "storedRecordCount": 1,
+      "generationMs": 846.18
+    },
+    {
+      "scale": 100000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-100000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-100000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 4973,
+      "sampleSize": 100000,
+      "storedRecordCount": 1,
+      "generationMs": 1698.24
+    },
+    {
+      "scale": 500000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-500000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-500000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 5025,
+      "sampleSize": 500000,
+      "storedRecordCount": 1,
+      "generationMs": 8603.18
+    },
+    {
+      "scale": 1000000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-1000000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-1000000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 5099,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 18399.58
+    },
+    {
+      "scale": 2000000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-2000000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-2000000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 5129,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 18332.41
+    },
+    {
+      "scale": 5000000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-5000000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-5000000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 5173,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 13393.22
+    },
+    {
+      "scale": 10000000,
+      "bucketCount": 120,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000000-bucket-120-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000000-bucket-120-seed-20260212.json",
+      "fileSizeBytes": 5191,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 11128.78
+    },
+    {
+      "scale": 10000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5339,
+      "sampleSize": 10000,
+      "storedRecordCount": 1,
+      "generationMs": 134.66
+    },
+    {
+      "scale": 50000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-50000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-50000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5418,
+      "sampleSize": 50000,
+      "storedRecordCount": 1,
+      "generationMs": 689.6
+    },
+    {
+      "scale": 100000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-100000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-100000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5457,
+      "sampleSize": 100000,
+      "storedRecordCount": 1,
+      "generationMs": 1240.4
+    },
+    {
+      "scale": 500000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-500000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-500000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5610,
+      "sampleSize": 500000,
+      "storedRecordCount": 1,
+      "generationMs": 5346.54
+    },
+    {
+      "scale": 1000000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-1000000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-1000000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5688,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 10122.45
+    },
+    {
+      "scale": 2000000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-2000000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-2000000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5723,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 10630.65
+    },
+    {
+      "scale": 5000000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-5000000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-5000000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5779,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 12519.89
+    },
+    {
+      "scale": 10000000,
+      "bucketCount": 160,
+      "seed": 20260212,
+      "fileName": "mockup-scale-10000000-bucket-160-seed-20260212.json",
+      "filePath": "/Users/smlee/view-data-next/public/mockup-data/mockup-scale-10000000-bucket-160-seed-20260212.json",
+      "fileSizeBytes": 5822,
+      "sampleSize": 1000000,
+      "storedRecordCount": 1,
+      "generationMs": 12810.05
+    }
+  ]
+}
