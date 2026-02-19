@@ -30,9 +30,17 @@ interface LineChartChartJsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
+  yMin?: number;
+  yMax?: number;
 }
 
-export function LineChartChartJs({ dataset, labels, counts }: LineChartChartJsProps) {
+export function LineChartChartJs({
+  dataset,
+  labels,
+  counts,
+  yMin,
+  yMax,
+}: LineChartChartJsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
@@ -80,6 +88,8 @@ export function LineChartChartJs({ dataset, labels, counts }: LineChartChartJsPr
       },
       y: {
         beginAtZero: true,
+        min: yMin,
+        max: yMax,
         title: {
           display: true,
           text: "Count",

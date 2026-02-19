@@ -31,6 +31,44 @@ const TAB_SWITCH_DELAY_MS = 260;
 const ZOOM_STEP_PERCENT = 20;
 const MIN_ZOOM_PERCENT = 20;
 
+type ZoomActionType = "zoom-in" | "zoom-out" | "pan" | "reset";
+type YAxisMode = "global-fixed" | "window-auto";
+
+interface ZoomRenderMetric {
+  count: number;
+  lastMs: number;
+  averageMs: number;
+  maxMs: number;
+}
+
+interface WindowStats {
+  totalCount: number;
+  averageCount: number;
+  minCount: number;
+  maxCount: number;
+  peakLabel: string;
+  peakGlobalIndex: number;
+  coverageRatio: number;
+}
+
+const ZOOM_ACTIONS: ZoomActionType[] = ["zoom-in", "zoom-out", "pan", "reset"];
+
+const ZOOM_ACTION_LABELS: Record<ZoomActionType, string> = {
+  "zoom-in": "줌인",
+  "zoom-out": "줌아웃",
+  pan: "구간 이동",
+  reset: "초기화",
+};
+
+function createInitialZoomRenderMetrics(): Record<ZoomActionType, ZoomRenderMetric> {
+  return {
+    "zoom-in": { count: 0, lastMs: 0, averageMs: 0, maxMs: 0 },
+    "zoom-out": { count: 0, lastMs: 0, averageMs: 0, maxMs: 0 },
+    pan: { count: 0, lastMs: 0, averageMs: 0, maxMs: 0 },
+    reset: { count: 0, lastMs: 0, averageMs: 0, maxMs: 0 },
+  };
+}
+
 // Locale-friendly integer display helper.
 function formatNumber(value: number) {
   return new Intl.NumberFormat("ko-KR").format(value);
@@ -60,6 +98,7 @@ export function ChartPlayground() {
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [zoomPercent, setZoomPercent] = useState<number>(100);
   const [zoomOffsetPercent, setZoomOffsetPercent] = useState<number>(0);
+  const [yAxisMode, setYAxisMode] = useState<YAxisMode>("global-fixed");
   const [scale, setScale] = useState<DataScale>(100000);
   const [bucketCount, setBucketCount] = useState<number>(80);
   const [seed, setSeed] = useState<number>(20260212);
@@ -70,7 +109,21 @@ export function ChartPlayground() {
   > | null>(null);
   const [mockupHitCount, setMockupHitCount] = useState<number>(0);
   const [isPreparingDatasets, setIsPreparingDatasets] = useState<boolean>(true);
+  const [zoomRenderMetrics, setZoomRenderMetrics] = useState<
+    Record<ZoomActionType, ZoomRenderMetric>
+  >(() => createInitialZoomRenderMetrics());
+  const [lastZoomRender, setLastZoomRender] = useState<{
+    action: ZoomActionType;
+    elapsedMs: number;
+  } | null>(null);
   const switchTimeoutRef = useRef<number | null>(null);
+  const pendingZoomMeasureRef = useRef<{
+    action: ZoomActionType;
+    startedAt: number;
+    token: number;
+  } | null>(null);
+  const zoomMeasureTokenRef = useRef<number>(0);
+  const [zoomMeasureToken, setZoomMeasureToken] = useState<number>(0);
   const selectedLibrary = pendingLibrary ?? activeLibrary;
 
   useEffect(
@@ -207,21 +260,136 @@ export function ChartPlayground() {
         : [],
     [selectedDataset, visibleStartIndex, visibleEndIndex],
   );
+  const globalYAxisMax = selectedDataset
+    ? Math.max(1, ...selectedDataset.counts)
+    : undefined;
+  const windowYAxisMax =
+    visibleCounts.length > 0 ? Math.max(1, ...visibleCounts) : undefined;
+  const chartYAxisMax = yAxisMode === "global-fixed" ? globalYAxisMax : undefined;
+  const windowStats = useMemo<WindowStats | null>(() => {
+    if (!selectedDataset || visibleCounts.length === 0 || visibleLabels.length === 0) {
+      return null;
+    }
+
+    let totalCount = 0;
+    let minCount = Number.POSITIVE_INFINITY;
+    let maxCount = Number.NEGATIVE_INFINITY;
+    let peakLocalIndex = 0;
+
+    for (let index = 0; index < visibleCounts.length; index += 1) {
+      const value = visibleCounts[index];
+      totalCount += value;
+
+      if (value < minCount) {
+        minCount = value;
+      }
+
+      if (value > maxCount) {
+        maxCount = value;
+        peakLocalIndex = index;
+      }
+    }
+
+    return {
+      totalCount,
+      averageCount: totalCount / visibleCounts.length,
+      minCount,
+      maxCount,
+      peakLabel: visibleLabels[peakLocalIndex],
+      peakGlobalIndex: visibleStartIndex + peakLocalIndex + 1,
+      coverageRatio: visibleCounts.length / selectedDataset.bucketCount,
+    };
+  }, [selectedDataset, visibleCounts, visibleLabels, visibleStartIndex]);
   const firstRecord = selectedDataset?.records[0] ?? null;
   const canZoomIn = Boolean(selectedDataset) && zoomPercent > MIN_ZOOM_PERCENT;
   const canZoomOut = Boolean(selectedDataset) && zoomPercent < 100;
 
+  function queueZoomRenderMeasurement(action: ZoomActionType) {
+    zoomMeasureTokenRef.current += 1;
+    pendingZoomMeasureRef.current = {
+      action,
+      startedAt: performance.now(),
+      token: zoomMeasureTokenRef.current,
+    };
+    setZoomMeasureToken(zoomMeasureTokenRef.current);
+  }
+
+  useEffect(() => {
+    const pending = pendingZoomMeasureRef.current;
+
+    if (!selectedDataset || !pending || pending.token !== zoomMeasureToken) {
+      return;
+    }
+
+    let frameOne = 0;
+    let frameTwo = 0;
+
+    // Measure after two paint frames to include React commit + chart canvas redraw.
+    frameOne = window.requestAnimationFrame(() => {
+      frameTwo = window.requestAnimationFrame(() => {
+        const currentPending = pendingZoomMeasureRef.current;
+
+        if (!currentPending || currentPending.token !== pending.token) {
+          return;
+        }
+
+        const elapsedMs = performance.now() - currentPending.startedAt;
+
+        setZoomRenderMetrics((previous) => {
+          const target = previous[currentPending.action];
+          const nextCount = target.count + 1;
+          const nextAverageMs =
+            (target.averageMs * target.count + elapsedMs) / nextCount;
+
+          return {
+            ...previous,
+            [currentPending.action]: {
+              count: nextCount,
+              lastMs: elapsedMs,
+              averageMs: nextAverageMs,
+              maxMs: Math.max(target.maxMs, elapsedMs),
+            },
+          };
+        });
+        setLastZoomRender({ action: currentPending.action, elapsedMs });
+        pendingZoomMeasureRef.current = null;
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameOne);
+      window.cancelAnimationFrame(frameTwo);
+    };
+  }, [
+    selectedDataset,
+    zoomMeasureToken,
+    visibleStartIndex,
+    visibleEndIndex,
+    visibleBucketCount,
+    activeLibrary,
+    chartKind,
+    yAxisMode,
+  ]);
+
   function handleZoomIn() {
+    queueZoomRenderMeasurement("zoom-in");
     setZoomPercent((prev) => Math.max(MIN_ZOOM_PERCENT, prev - ZOOM_STEP_PERCENT));
   }
 
   function handleZoomOut() {
+    queueZoomRenderMeasurement("zoom-out");
     setZoomPercent((prev) => Math.min(100, prev + ZOOM_STEP_PERCENT));
   }
 
   function handleZoomReset() {
+    queueZoomRenderMeasurement("reset");
     setZoomPercent(100);
     setZoomOffsetPercent(0);
+  }
+
+  function handleZoomOffsetChange(nextOffset: number) {
+    queueZoomRenderMeasurement("pan");
+    setZoomOffsetPercent(nextOffset);
   }
 
   return (
@@ -399,11 +567,72 @@ export function ChartPlayground() {
                 max={100}
                 step={1}
                 value={zoomOffsetPercent}
-                onChange={(event) => setZoomOffsetPercent(Number(event.target.value))}
+                onChange={(event) =>
+                  handleZoomOffsetChange(Number(event.target.value))
+                }
                 className="w-full"
               />
             </div>
           ) : null}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-slate-700">Y축 스케일</span>
+            <button
+              type="button"
+              onClick={() => setYAxisMode("global-fixed")}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
+                yAxisMode === "global-fixed"
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              전체 고정
+            </button>
+            <button
+              type="button"
+              onClick={() => setYAxisMode("window-auto")}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
+                yAxisMode === "window-auto"
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              구간 자동
+            </button>
+            <p className="text-xs text-slate-600">
+              {yAxisMode === "global-fixed"
+                ? `전체 기준 최대 ${formatNumber(globalYAxisMax ?? 0)}`
+                : `현재 구간 최대 ${formatNumber(windowYAxisMax ?? 0)}`}
+            </p>
+          </div>
+          <div className="mt-3 rounded-md border border-slate-200 bg-white p-2">
+            <p className="text-xs font-semibold text-slate-700">
+              줌 액션 렌더링 지연 (UI + 차트 repaint 근사)
+            </p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {ZOOM_ACTIONS.map((action) => {
+                const metric = zoomRenderMetrics[action];
+                return (
+                  <div key={action} className="rounded border border-slate-200 p-2">
+                    <p className="text-[11px] text-slate-500">{ZOOM_ACTION_LABELS[action]}</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      최근 {metric.count > 0 ? formatMs(metric.lastMs) : "-"}
+                    </p>
+                    <p className="text-[11px] text-slate-500">
+                      평균 {metric.count > 0 ? formatMs(metric.averageMs) : "-"} / 최대{" "}
+                      {metric.count > 0 ? formatMs(metric.maxMs) : "-"} / {metric.count}회
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[11px] text-slate-500">
+              {lastZoomRender
+                ? `마지막 측정: ${ZOOM_ACTION_LABELS[lastZoomRender.action]} ${formatMs(
+                    lastZoomRender.elapsedMs,
+                  )}`
+                : "아직 측정값이 없습니다. 줌인/줌아웃/구간 이동을 실행해보세요."}
+            </p>
+          </div>
           <p className="mt-2 text-xs text-slate-600">
             프리빌드: {SCALE_OPTIONS.length}개 스케일 / 처리{" "}
             {formatNumber(prebuiltTotalSampleSize)}건 / 누적{" "}
@@ -508,6 +737,46 @@ export function ChartPlayground() {
               전체 스케일 추정 메모리{" "}
               {formatMb(selectedDataset.pipeline.estimatedScaleFootprintMb)}
             </p>
+            {windowStats ? (
+              <section className="mb-3 grid gap-2 rounded-md border border-slate-200 bg-white p-3 sm:grid-cols-2 lg:grid-cols-6">
+                <article>
+                  <p className="text-[11px] text-slate-500">현재 구간 버킷 합계</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {formatNumber(windowStats.totalCount)}
+                  </p>
+                </article>
+                <article>
+                  <p className="text-[11px] text-slate-500">현재 구간 평균</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {windowStats.averageCount.toFixed(1)}
+                  </p>
+                </article>
+                <article>
+                  <p className="text-[11px] text-slate-500">현재 구간 최소</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {formatNumber(windowStats.minCount)}
+                  </p>
+                </article>
+                <article>
+                  <p className="text-[11px] text-slate-500">현재 구간 최대</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {formatNumber(windowStats.maxCount)}
+                  </p>
+                </article>
+                <article>
+                  <p className="text-[11px] text-slate-500">피크 버킷</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    #{windowStats.peakGlobalIndex} ({windowStats.peakLabel})
+                  </p>
+                </article>
+                <article>
+                  <p className="text-[11px] text-slate-500">전체 대비 커버리지</p>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {(windowStats.coverageRatio * 100).toFixed(1)}%
+                  </p>
+                </article>
+              </section>
+            ) : null}
 
             <div className="relative min-h-[460px]">
               {isSwitchingLibrary ? (
@@ -521,12 +790,16 @@ export function ChartPlayground() {
                     dataset={selectedDataset}
                     labels={visibleLabels}
                     counts={visibleCounts}
+                    yMin={0}
+                    yMax={chartYAxisMax}
                   />
                 ) : (
                   <LineChartECharts
                     dataset={selectedDataset}
                     labels={visibleLabels}
                     counts={visibleCounts}
+                    yMin={0}
+                    yMax={chartYAxisMax}
                   />
                 )
               ) : chartKind === "bar" ? (
@@ -534,12 +807,16 @@ export function ChartPlayground() {
                   dataset={selectedDataset}
                   labels={visibleLabels}
                   counts={visibleCounts}
+                  yMin={0}
+                  yMax={chartYAxisMax}
                 />
               ) : (
                 <LineChartChartJs
                   dataset={selectedDataset}
                   labels={visibleLabels}
                   counts={visibleCounts}
+                  yMin={0}
+                  yMax={chartYAxisMax}
                 />
               )}
             </div>

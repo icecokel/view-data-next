@@ -20,9 +20,17 @@ interface BarChartChartJsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
+  yMin?: number;
+  yMax?: number;
 }
 
-export function BarChartChartJs({ dataset, labels, counts }: BarChartChartJsProps) {
+export function BarChartChartJs({
+  dataset,
+  labels,
+  counts,
+  yMin,
+  yMax,
+}: BarChartChartJsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
@@ -65,6 +73,8 @@ export function BarChartChartJs({ dataset, labels, counts }: BarChartChartJsProp
       },
       y: {
         beginAtZero: true,
+        min: yMin,
+        max: yMax,
         title: {
           display: true,
           text: "Count",

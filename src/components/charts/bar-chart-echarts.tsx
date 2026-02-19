@@ -21,9 +21,17 @@ interface BarChartEChartsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
+  yMin?: number;
+  yMax?: number;
 }
 
-export function BarChartECharts({ dataset, labels, counts }: BarChartEChartsProps) {
+export function BarChartECharts({
+  dataset,
+  labels,
+  counts,
+  yMin,
+  yMax,
+}: BarChartEChartsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
@@ -60,6 +68,8 @@ export function BarChartECharts({ dataset, labels, counts }: BarChartEChartsProp
     },
     yAxis: {
       type: "value",
+      min: yMin,
+      max: yMax,
       name: "Count",
       nameTextStyle: {
         color: "#334155",

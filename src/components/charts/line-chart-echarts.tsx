@@ -21,9 +21,17 @@ interface LineChartEChartsProps {
   dataset: HistogramDataset;
   labels?: string[];
   counts?: number[];
+  yMin?: number;
+  yMax?: number;
 }
 
-export function LineChartECharts({ dataset, labels, counts }: LineChartEChartsProps) {
+export function LineChartECharts({
+  dataset,
+  labels,
+  counts,
+  yMin,
+  yMax,
+}: LineChartEChartsProps) {
   const animationDuration = dataset.scale >= 100000000 ? 350 : 700;
   const chartLabels = labels ?? dataset.labels;
   const chartCounts = counts ?? dataset.counts;
@@ -59,6 +67,8 @@ export function LineChartECharts({ dataset, labels, counts }: LineChartEChartsPr
     },
     yAxis: {
       type: "value",
+      min: yMin,
+      max: yMax,
       name: "Count",
       nameTextStyle: {
         color: "#334155",
